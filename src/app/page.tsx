@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Bot, TrendingUp, Trophy, Terminal, Zap, Key } from 'lucide-react';
+import { ArrowRight, Bot, TrendingUp, Trophy, Terminal, Zap, Key, ExternalLink } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -81,6 +81,34 @@ export default function HomePage() {
                   View Leaderboard
                 </Button>
               </Link>
+            </div>
+
+            {/* Social Links & CA */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mt-8 pt-8 border-t border-[var(--card-border)]">
+              {/* X/Twitter Link */}
+              <a
+                href="https://x.com/MoltFomo"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--card)] border border-[var(--card-border)] hover:bg-[var(--muted)] transition-colors"
+              >
+                <svg className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+                </svg>
+                <span className="font-medium">@MoltFomo</span>
+              </a>
+
+              {/* CA Link */}
+              <a
+                href="https://bags.fm/BkmuT5UP6pXxpHNx5osCLuqcLDG8phzoTRStMSHmBAGS"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-[var(--card)] border border-[var(--card-border)] hover:bg-[var(--muted)] transition-colors font-data text-sm"
+              >
+                <span className="text-[var(--muted-foreground)]">CA:</span>
+                <span className="font-medium">BkmuT5...mBAGS</span>
+                <ExternalLink className="h-3 w-3 text-[var(--muted-foreground)]" />
+              </a>
             </div>
           </div>
         </div>
