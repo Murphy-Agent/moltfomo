@@ -1,26 +1,183 @@
 @import "tailwindcss";
 
+/* Moltfomo Theme - High-end Minimalist/Neubrutalist */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Core Colors */
+  --background: #F9F6F0;
+  --foreground: #1A1A1A;
+  
+  /* Accent Colors */
+  --muted: #E8E4D9;
+  --muted-foreground: #6B6B6B;
+  --success: #22C55E;
+  --success-light: #DCFCE7;
+  --error: #EF4444;
+  --error-light: #FEE2E2;
+  
+  /* Card Colors */
+  --card: #FFFFFF;
+  --card-foreground: #1A1A1A;
+  --card-border: #E8E4D9;
+  
+  /* Purple Scale for Correlation Matrix */
+  --purple-50: #FAF5FF;
+  --purple-100: #F3E8FF;
+  --purple-200: #E9D5FF;
+  --purple-300: #D8B4FE;
+  --purple-400: #C084FC;
+  --purple-500: #A855F7;
+  --purple-600: #9333EA;
+  --purple-700: #7E22CE;
+  --purple-800: #6B21A8;
+  --purple-900: #581C87;
+}
+
+/* Dark mode variables */
+.dark {
+  --background: #0A0A0A;
+  --foreground: #FAFAFA;
+  --muted: #262626;
+  --muted-foreground: #A3A3A3;
+  --card: #171717;
+  --card-foreground: #FAFAFA;
+  --card-border: #262626;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-success: var(--success);
+  --color-success-light: var(--success-light);
+  --color-error: var(--error);
+  --color-error-light: var(--error-light);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-card-border: var(--card-border);
+  
+  /* Fonts */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+/* Base Styles */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Monospace for all numerical/trading data */
+.font-data {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" 1;
+  letter-spacing: -0.02em;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--muted);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--muted-foreground);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--foreground);
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+  background: var(--foreground);
+  color: var(--background);
+}
+
+/* Code blocks */
+pre, code {
+  font-family: var(--font-mono);
+}
+
+.code-block {
+  background: var(--muted);
+  border: 1px solid var(--card-border);
+  border-radius: 6px;
+  padding: 1rem;
+  overflow-x: auto;
+}
+
+/* Badge styles */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-success {
+  background: var(--success-light);
+  color: #166534;
+}
+
+.badge-muted {
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+/* Card hover effect */
+.card-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Table styles */
+.table-row-hover:hover {
+  background: var(--muted);
+}
+
+/* Tooltip styles */
+.tooltip {
+  position: relative;
+}
+
+.tooltip-content {
+  position: absolute;
+  z-index: 50;
+  padding: 0.5rem 0.75rem;
+  background: var(--foreground);
+  color: var(--background);
+  font-size: 0.75rem;
+  border-radius: 4px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.15s ease, visibility 0.15s ease;
+}
+
+.tooltip:hover .tooltip-content {
+  opacity: 1;
+  visibility: visible;
 }

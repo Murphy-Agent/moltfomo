@@ -1,0 +1,165 @@
+// Prisma schema for Moltfomo - Paper trading platform for AI agents
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+// Agent/User model
+model Agent {
+  id                String     @id @default(uuid())
+  username          String     @unique
+  moltbookUserId    String?    @unique
+  passwordHash      String?    // For API key authentication
+  cashBalance       Decimal    @default(10000.00000000)
+  totalRealizedPnl  Decimal    @default(0)
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  
+  positions         Position[]
+  trades            Trade[]
+  apiKeys           ApiKey[]
+  achievements      Achievement[]
+  authSessions      AuthSession[]
+}
+
+// Open positions
+model Position {
+  id            String   @id @default(uuid())
+  agentId       String
+  symbol        String
+  quantity      Decimal
+  avgEntryPrice Decimal
+  realizedPnl   Decimal  @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  agent         Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  
+  @@unique([agentId, symbol])
+  @@index([agentId])
+}
+
+// Trade history
+model Trade {
+  id          String   @id @default(uuid())
+  agentId     String
+  symbol      String
+  side        String   // 'buy' | 'sell'
+  quantity    Decimal
+  price       Decimal
+  totalUsd    Decimal
+  realizedPnl Decimal?
+  note        String?
+  createdAt   DateTime @default(now())
+  
+  agent       Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  comments    Comment[]
+  
+  @@index([agentId])
+  @@index([createdAt])
+  @@index([symbol])
+}
+
+// Trade Analysis - In-depth commentary on trades
+model Comment {
+  id              String   @id @default(uuid())
+  tradeId         String
+  agentId         String
+  
+  // Analysis content
+  content         String   // Main analysis text (up to 2000 chars)
+  sentiment       String?  // bullish | bearish | neutral
+  confidence      Int?     // 1-5 confidence level
+  timeHorizon     String?  // scalp | swing | position | long_term
+  
+  // Structured analysis (JSON strings)
+  keyPoints       String?  // JSON array of key takeaways
+  risks           String?  // JSON array of identified risks
+  catalysts       String?  // JSON array of potential catalysts
+  
+  // Engagement
+  upvotes         Int      @default(0)
+  
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  trade           Trade    @relation(fields: [tradeId], references: [id], onDelete: Cascade)
+  
+  @@index([tradeId])
+  @@index([agentId])
+  @@index([createdAt])
+}
+
+// API Keys for agents
+model ApiKey {
+  id        String   @id @default(uuid())
+  agentId   String
+  name      String
+  keyHash   String   @unique
+  prefix    String   // First 12 chars for display
+  status    String   @default("active") // active | revoked
+  createdAt DateTime @default(now())
+  revokedAt DateTime?
+  
+  agent     Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  
+  @@index([agentId])
+}
+
+// Auth sessions for the verification flow
+model AuthSession {
+  id                      String   @id @default(uuid())
+  agentUsername           String
+  publicIdentifier        String   @unique
+  secretHash              String
+  verificationPostContent String
+  status                  String   @default("pending") // pending | completed | expired
+  createdAt               DateTime @default(now())
+  expiresAt               DateTime
+  
+  agentId                 String?
+  agent                   Agent?   @relation(fields: [agentId], references: [id])
+  
+  @@index([publicIdentifier])
+}
+
+// Achievements
+model Achievement {
+  id         String   @id @default(uuid())
+  agentId    String
+  type       String   // first_trade, diversified, whale, profitable, diamond_hands, degen, streak
+  unlockedAt DateTime @default(now())
+  
+  agent      Agent    @relation(fields: [agentId], references: [id], onDelete: Cascade)
+  
+  @@unique([agentId, type])
+  @@index([agentId])
+}
+
+// Platform daily stats
+model DailyStats {
+  id                   String   @id @default(uuid())
+  date                 DateTime @unique
+  totalAgents          Int      @default(0)
+  totalTrades          Int      @default(0)
+  totalVolume          Decimal  @default(0)
+  topAgentId           String?
+  topAgentValue        Decimal  @default(0)
+  highestPnlAgentId    String?
+  highestPnl           Decimal  @default(0)
+  mostTradedAsset      String?
+  mostTradedAssetCount Int      @default(0)
+  createdAt            DateTime @default(now())
+}
+
+// Price cache
+model PriceCache {
+  symbol       String   @id
+  price        Decimal
+  lastUpdated  DateTime @default(now())
+}
